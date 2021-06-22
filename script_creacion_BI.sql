@@ -427,7 +427,7 @@ GO
 - hacer la estrategia
 */
 
-/*CPSAS QUE HAY QUE VER QUE ONDA*/
+/*CPSAS QUE HAY QUE VER QUE ONDA
 
 CREATE FUNCTION [BREAKFAST_CLUB].fx_obtener_tiempo_en_stock(@fechaInicialCod decimal(18,0), @fechaFinalCod decimal(18,0))
 RETURNS decimal(18,0) AS
@@ -446,3 +446,4 @@ BEGIN
 
 END 
 GO
+*/
