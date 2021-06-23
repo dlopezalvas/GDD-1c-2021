@@ -50,14 +50,14 @@ BEGIN
 	declare @stock_restante_mes decimal(18,0) = [BREAKFAST_CLUB].obtener_cant_comprada_por_mes_accesorio(@mes_stock, @cod_accesorio, @cod_sucursal)
 	declare @retorno decimal(18,4)
 
-	declare @ventas_hasta_mes_actual decimal (18,0) = [BREAKFAST_CLUB].obtener_cant_vendida_accesorio_entre(@mes_stock, [BREAKFAST_CLUB].obtener_cod_mes_siguiente(@mes_actual) , @cod_accesorio, @cod_sucursal)
+	declare @ventas_hasta_mes_actual decimal (18,0) = [BREAKFAST_CLUB].obtener_cant_vendida_accesorio_entre(@mes_stock, @mes_actual-1 , @cod_accesorio, @cod_sucursal)
 
 	WHILE (@ventas_hasta_mes_actual > 0) 
 	BEGIN  
 		IF(@ventas_hasta_mes_actual > @stock_restante_mes)
 		BEGIN
 			SET @ventas_hasta_mes_actual = @ventas_hasta_mes_actual - @stock_restante_mes
-			SET @mes_stock = [BREAKFAST_CLUB].obtener_cod_mes_siguiente(@mes_stock) 
+			SET @mes_stock = @mes_stock+1
 			SET @stock_restante_mes = [BREAKFAST_CLUB].obtener_cant_comprada_por_mes_accesorio(@mes_stock, @cod_accesorio, @cod_sucursal)
 		END
 		ELSE
@@ -78,7 +78,7 @@ BEGIN
 			SET @total_meses = @total_meses + @stock_restante_mes * [BREAKFAST_CLUB].obtener_cant_meses_entre(@mes_stock, @mes_actual)
 			/* cant vendida en ese mes * cant de meses entre el mes y ahora*/
 			SET @CANT_VENDIDA_MES = @CANT_VENDIDA_MES - @stock_restante_mes
-			SET @mes_stock = [BREAKFAST_CLUB].obtener_cod_mes_siguiente(@mes_stock)
+			SET @mes_stock = @mes_stock+1
 			SET @stock_restante_mes = [BREAKFAST_CLUB].obtener_cant_comprada_por_mes_accesorio(@mes_stock, @cod_accesorio, @cod_sucursal)
 		END
 		ELSE
@@ -88,7 +88,8 @@ BEGIN
 		END
 		BREAK;  
 	END  
-	SET @retorno = CONVERT(decimal(12,4),@total_meses)  /  CONVERT(decimal(12,4),@cant_vendida) 
+	set @CANT_VENDIDA_MES = CONVERT(decimal(18,4),@cant_vendida) 
+	SET @retorno = @total_meses /  @CANT_VENDIDA_MES
 
 	return @retorno
 
@@ -114,13 +115,13 @@ exec [BREAKFAST_CLUB].PRC_BI_SET_TIEMPO_EN_STOCK_ACCESORIOS
 
 select * from BREAKFAST_CLUB.BI_HECHOS_ACCESORIOS WHERE TIPO_TRANSACCION = 'VENTA'
 
-SELECT [BREAKFAST_CLUB].obtener_tiempo_en_stock_accesorio(23, 1001, 3, 388)
+SELECT [BREAKFAST_CLUB].obtener_tiempo_en_stock_accesorio(22, 1001, 3, 280)
 
 select cod_tiempo, cantidad, cod_accesorio, cod_sucursal from BREAKFAST_CLUB.bi_hechos_accesorios 
-where cod_accesorio = 1001 and cod_sucursal = 3 and tipo_transaccion = 'Compra' order by cod_tiempo
+where cod_accesorio = 1002 and cod_sucursal = 3 and tipo_transaccion = 'Compra' order by cod_tiempo
 
-SELECT COD_TIEMPO, SUM(CANTIDAD) AS CANTIDAD, COD_ACCESORIO, COD_SUCURSAL FROM [BREAKFAST_CLUB].BI_HECHOS_accesorios 
-WHERE TIPO_TRANSACCION = 'Venta' AND cod_accesorio = 1001 AND COD_SUCURSAL = 3 GROUP BY COD_TIEMPO, COD_ACCESORIO, COD_SUCURSAL
+SELECT COD_TIEMPO, TIEMPO_EN_STOCK, SUM(CANTIDAD) AS CANTIDAD, COD_ACCESORIO, COD_SUCURSAL FROM [BREAKFAST_CLUB].BI_HECHOS_accesorios 
+WHERE TIPO_TRANSACCION = 'Venta' AND cod_accesorio = 1002 AND COD_SUCURSAL = 3 GROUP BY COD_TIEMPO, COD_ACCESORIO, COD_SUCURSAL, TIEMPO_EN_STOCK
 
 
 /*borrar todo esto*/
