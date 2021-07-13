@@ -8,20 +8,7 @@ CREATE TABLE [BREAKFAST_CLUB].[BI_TIEMPO] (
   PRIMARY KEY ([COD_TIEMPO]),
   CONSTRAINT ck_tiempo_mes CHECK ([MES] BETWEEN 0 AND 12) 
 );
-/*
-CREATE TABLE [BREAKFAST_CLUB].[BI_CLIENTE] (
-  [COD_CLIENTE] decimal(18,0) NOT NULL,
-  [NOMBRE] nvarchar(255) NOT NULL,
-  [APELLIDO] nvarchar(255) NOT NULL,
-  [DNI] decimal(18,0) NOT NULL,
-  [EDAD] nvarchar(50) NOT NULL,
-  [MAIL] nvarchar(255) ,
-  [TELEFONO] int ,
-  [DIRECCION] nvarchar(255),
-  PRIMARY KEY ([COD_CLIENTE]),
-  CONSTRAINT ck_cliente_edad CHECK ([EDAD] IN ('18-30anios','31-50anios', '>50anios'))
-);
-*/
+
 CREATE TABLE [BREAKFAST_CLUB].[BI_SUCURSAL](
 	[COD_SUCURSAL] decimal (18,0),
 	[COD_CIUDAD] decimal (18,0) REFERENCES [BREAKFAST_CLUB].CIUDAD,
